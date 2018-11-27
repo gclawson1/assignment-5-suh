@@ -1,0 +1,61 @@
+﻿Employment Type,Gender,Median Salary,Field of study
+p,M,"42,750",Agricultural sciences and natural resources
+p,M,"42,000",Biological and biomedical sciences
+p,M,"43,000",Health sciences
+p,M,"42,000",Chemistry
+p,M,"50,000","Geosciences, atmospheric, and ocean sciences"
+p,M,"50,000",Physics and astronomy
+p,M,"58,000",Mathematics and computer sciences
+p,M,"42,000",Psychology
+p,M,"65,000",Economics
+p,M,"48,000",Social sciences
+p,M,"45,000",Engineering
+p,M,"50,000",Education
+p,M,"45,000",Humanities and arts
+p,M,"60,000",Business management and administration
+p,M,"50,000",Other non-S&E fields
+p,F,"42,750",Agricultural sciences and natural resources
+p,F,"42,000",Biological and biomedical sciences
+p,F,"43,000",Health sciences
+p,F,"42,000",Chemistry
+p,F,"50,000","Geosciences, atmospheric, and ocean sciences"
+p,F,"50,000",Physics and astronomy
+p,F,"58,000",Mathematics and computer sciences
+p,F,"42,000",Psychology
+p,F,"65,000",Economics
+p,F,"48,000",Social sciences
+p,F,"45,000",Engineering
+p,F,"50,000",Education
+p,F,"45,000",Humanities and arts
+p,F,"60,000",Business management and administration
+p,F,"50,000",Other non-S&E fields
+np,M,"78,000",Agricultural sciences and natural resources
+np,M,"75,000",Biological and biomedical sciences
+np,M,"75,000",Health sciences
+np,M,"80,000",Chemistry
+np,M,"75,167","Geosciences, atmospheric, and ocean sciences"
+np,M,"95,000",Physics and astronomy
+np,M,"105,000",Mathematics and computer sciences
+np,M,"63,000",Psychology
+np,M,"105,000",Economics
+np,M,"64,000",Social sciences
+np,M,"95,000",Engineering
+np,M,"71,000",Education
+np,M,"52,000",Humanities and arts
+np,M,"123,500",Business management and administration
+np,M,"62,800",Other non-S&E fields
+np,F,"44,000",Agricultural sciences and natural resources
+np,F,"42,000",Biological and biomedical sciences
+np,F,"43,250",Health sciences
+np,F,"42,000",Chemistry
+np,F,"50,000","Geosciences, atmospheric, and ocean sciences"
+np,F,"53,000",Physics and astronomy
+np,F,"55,000",Mathematics and computer sciences
+np,F,"42,000",Psychology
+np,F,"65,000",Economics
+np,F,"49,250",Social sciences
+np,F,"45,000",Engineering
+np,F,"45,000",Education
+np,F,"45,000",Humanities and arts
+np,F,"63,500",Business management and administration
+np,F,"44,000",Other non-S&E fields
