@@ -9,10 +9,67 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+```{r}
+# Load packages
+library(tidyverse)
+library(RColorBrewer)
+library(stargazer)
+library(knitr)
+library(car)
+```
+
 
 ** 1. Male and female graduate enrollment (1967 - 2015). Compare trends in total graduate enrollment for males and females (including full-time/part-time and private/public universities) in the United States from 1967 - 2015. Describe your results statistically, graphically and in text. **
 
 ```{r}
+# Read in dataset
+enroll_totals <- read_csv("Grad enrollment 1967 - 2015.csv")
+
+# Make a time series graph with year on x axis and totals on y axis
+
+totals_line <- ggplot(enroll_totals, aes(x = year)) +
+  geom_line(aes(y = total_males, color = "blue")) +
+  geom_line(aes(y = total_females, color = "red")) + 
+  theme_classic() +                                                        # do we want theme_bw() instead??
+  scale_x_continuous(expand = c(0,0), breaks = seq(1967, 2015, by = 5)) +  # do we want by 3 or by 5 years??
+  scale_y_continuous(breaks = seq(0, 2200000, by = 200000)) +
+  scale_color_manual(values = c("#00AFBB", "#E7B800"), labels = c("Males", "Females")) +
+  labs(x = "Year", y = "Enrollment Totals") +
+  theme(text = element_text(family = "Century Schoolbook"), legend.title=element_blank())
+
+totals_line
+
+# linear regression for males predicted by year
+
+males_lm <- lm(total_males ~ year, data = enroll_totals)
+summary(males_lm)
+
+females_lm <- lm(total_females ~ year, data = enroll_totals)
+summary(females_lm)
+
+# Need to determine if this is the correct way to do this, and interpret. 
+```
+
+**2. Shifts in female PhD recipients by field (1985, 2000, and 2015). Describe if and how there was a shift in PhDs awarded to females in four fields (Physical and Earth Sciences, Engineering, Education, and Humanities & Arts) in 1985, 2000, and 2015. Describe your results statistically, in a graph or table, and in text. Note: There are several ways that you can interpret this question. You are invited to decide which you think is/are most interesting. Just be really clear about what you are asking/answering in your report.**
+
+```{r}
+female_phd <- read_csv("PhDs by Field 1985 - 2015.csv")
+```
+
+
+
+**3. Male and female salaries for starting postdoctoral and other employment positions (2015). Compare median salaries for male and female doctorate recipients in 2015. Answer these two questions: Does median salary differ significantly between male and female starting postdoc positions? Does median salary differ significantly between male and female PhD recipients in non-postdoc employmentpositions?**
+
+```{r}
+median_salaries <- read_csv("Median salary for doctoral recipients.csv")
+```
+
+
+**4. Exploring academic salaries for professors in U.S. colleges. Explore relationships between variables in the ‘Faculty salary data (2008 - 2009 survey)’ dataset. Develop a model describing faculty salary based on data for faculty sex, rank, years in current position, field, and number of years since doctoral degree was earned. You should make decisions regarding which variables should remain in your final model. Describe the results qualitatively and quantitatively (i.e., don’t just report the statistical results of the model – make sure you describe interesting findings in text). You can also discuss any concerns that you have with the model(s) you present, if any.**
+
+```{r}
+faculty_salary <- read_csv("Faculty salary data (2008 - 2009 survey).csv")
 
 ```
+
 
