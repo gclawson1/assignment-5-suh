@@ -102,9 +102,18 @@ cor.test(enroll_totals$year, enroll_totals$total_females)
 #even stronger positive correlation
 
 # Need to interpret.
+
+```
+
+
+```{r stargazer1, results = 'asis'}
 m_f_enroll_lmtbl <- stargazer(males_lm, females_lm, type = "html") # not working
 
 
+```
+
+
+```{r}
 # FINAL GRAPH: Make a time series graph with year on x axis and totals on y axis
 
 totals_line <- ggplot(enroll_totals, aes(x = year)) +
@@ -318,6 +327,11 @@ AIC(test_lm2)
 #9096.813
 
 # AIC for first model is smaller, do we want to keep that though?? Judgement says we should not have years_since and years_service in the same model. 
+
+```
+
+```{r stargazer, results = 'asis'}
+stargazer(test_lm1, test_lm2, type = "html")
 ```
 
 
