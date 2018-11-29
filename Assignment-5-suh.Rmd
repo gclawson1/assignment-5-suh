@@ -21,6 +21,33 @@ library(car)
 
 ** 1. Male and female graduate enrollment (1967 - 2015). Compare trends in total graduate enrollment for males and females (including full-time/part-time and private/public universities) in the United States from 1967 - 2015. Describe your results statistically, graphically and in text. **
 
+
+What if we want to describe the way that one variable
+changes with respect to another variable?
+Then we might use regression to:
+(1) Understand how well input (x) variable(s) predict the
+value of an outcome (y) variable
+(2) How do input variables influence the output value?
+(3) Find a regression equation that *MAY* be used to
+make predictions for currently unknown values
+
+
+4 assumptions for linear regression 
+• Linearity
+• Independence
+• Homoscedasticity (residuals variance)
+• Normality
+
+Linear Regression Steps:
+(1) Look at and think about your data
+Does a linear relationship make the most sense, conceptually & visually?
+(2) Run the regression
+lm(y ~ x, data = df)
+(3) Check the diagnostic plots
+plot(model_name) – for evidence of homoscedasticity and normal residuals
+(4) Communicate the results in text/table/figure  
+
+
 ```{r}
 # Read in dataset
 enroll_totals <- read_csv("Grad enrollment 1967 - 2015.csv")
@@ -91,6 +118,44 @@ wsr_salaries_p
 
 
 **4. Exploring academic salaries for professors in U.S. colleges. Explore relationships between variables in the ‘Faculty salary data (2008 - 2009 survey)’ dataset. Develop a model describing faculty salary based on data for faculty sex, rank, years in current position, field, and number of years since doctoral degree was earned. You should make decisions regarding which variables should remain in your final model. Describe the results qualitatively and quantitatively (i.e., don’t just report the statistical results of the model – make sure you describe interesting findings in text). You can also discuss any concerns that you have with the model(s) you present, if any.**
+
+
+H0: The model does not significantly predict the
+outcome (i.e., there is no relationship between the
+model and the outcome; no variables significantly
+predict outcome)
+HA: AT LEAST ONE of the explanatory variables
+significantly predicts the outcome 
+
+
+How do I know which model is the BEST
+one?
+1. STATISTICS IS NO SUBSTITUTE FOR
+JUDGMENT.
+2. ASSUMPTIONS.
+3. AKAIKE INFORMATION CRITERION.
+
+Signs	and	Symptoms	of	Collinearity
+• High	correlation	between	predictor	variables
+• Large	standard	errors	for	regression	
+coefficient
+• Large	changes	in	model	output	for	small	
+changes	in	predictor	variable	inputs
+• Illogical/unexpected	 coefficients	 (esp.	
+coefficient	sign)
+
+Variance	Inflation	Factor
+How	much	the	variance	in	coefficients	is	inflated	
+(compared	 to	the	variance	if	there	were	no	
+correlation	 between	model	variables)	
+VIF	=	1:	No	correlation	(variance	is	not	inflated	at	all	by	correlation	
+with	other	predictor	variables)
+VIF	>	4:	Eeehhh…some	correlation,	investigate	further	and	think	
+critically	about	possible	overlaps	in	explanatory	variables
+VIF	>	10:	Serious	correlation	between	variables	that	may	be	
+strongly	inflating	coefficient	variance	and	error
+
+
 
 ```{r}
 faculty_salary <- read_csv("Faculty salary data (2008 - 2009 survey).csv")
