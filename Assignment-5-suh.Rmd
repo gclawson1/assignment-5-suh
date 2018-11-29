@@ -54,6 +54,16 @@ summary(females_lm)
 
 ```{r}
 female_phd <- read_csv("PhDs by Field 1985 - 2015.csv")
+
+female_phd1 <- select(female_phd, -year)  # delete year column
+
+rownames(female_phd1) <- c("1985", "2000", "2015")   # name rows as year
+
+female_phd_prop <- prop.table(as.matrix(female_phd1), 1)  #create proportion table
+
+female_phd_x2 <- chisq.test(female_phd1)   #perform chisquare test
+
+female_phd_x2 
 ```
 
 
