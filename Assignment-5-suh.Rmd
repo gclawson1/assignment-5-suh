@@ -109,7 +109,6 @@ cor.test(enroll_totals$year, enroll_totals$total_females)
 ```{r stargazer1, results = 'asis'}
 m_f_enroll_lmtbl <- stargazer(males_lm, females_lm, type = "html") # not working
 
-
 ```
 
 
@@ -318,6 +317,11 @@ summary(test_lm2)
 vif(test_lm2)
 # everything is ok here
 
+
+
+test_lm3 <- lm(salary ~ rank + field + years_since + sex, data = faculty_salary)
+summary(test_lm3)
+
 ### check AIC to determine which is better. Still we should trust our judgement here though
 
 AIC(test_lm1)
@@ -326,7 +330,36 @@ AIC(test_lm1)
 AIC(test_lm2)
 #9096.813
 
-# AIC for first model is smaller, do we want to keep that though?? Judgement says we should not have years_since and years_service in the same model. 
+AIC(test_lm3)
+#9097.22
+
+
+ggplot(aes(x = years_service, y = salary, color = field), data = faculty_salary) +
+  geom_point() + 
+  geom_smooth(aes(years_service, salary, color = field), method = lm, se = FALSE)
+
+ggplot(aes(x = years_since, y = salary, color = field), data = faculty_salary) +
+  geom_point() + 
+  geom_smooth(aes(years_since, salary, color = field), method = lm, se = FALSE)
+
+ggplot(aes(x = years_service, y = salary, color = rank), data = faculty_salary) +
+  geom_point() + 
+  geom_smooth(aes(years_service, salary, color = rank), method = lm, se = FALSE)
+
+ggplot(aes(x = years_since, y = salary, color = rank), data = faculty_salary) +
+  geom_point() + 
+  geom_smooth(aes(years_since, salary, color = rank), method = lm, se = FALSE)
+
+##interaction term for rank and years_service or years_since
+
+test_lm4 <- lm(salary ~ rank + field + years_since + sex + years_since*rank, data = faculty_salary)
+summary(test_lm4)
+
+vif(test_lm4)
+
+AIC(test_lm4)
+#9099.707
+
 
 ```
 
