@@ -44,10 +44,16 @@ totals_line
 males_lm <- lm(total_males ~ year, data = enroll_totals)
 summary(males_lm)
 
+plot(males_lm)
+
 females_lm <- lm(total_females ~ year, data = enroll_totals)
 summary(females_lm)
 
-# Need to determine if this is the correct way to do this, and interpret. 
+plot(females_lm)
+
+
+
+# Need to interpret. 
 ```
 
 **2. Shifts in female PhD recipients by field (1985, 2000, and 2015). Describe if and how there was a shift in PhDs awarded to females in four fields (Physical and Earth Sciences, Engineering, Education, and Humanities & Arts) in 1985, 2000, and 2015. Describe your results statistically, in a graph or table, and in text. Note: There are several ways that you can interpret this question. You are invited to decide which you think is/are most interesting. Just be really clear about what you are asking/answering in your report.**
@@ -64,14 +70,30 @@ female_phd_prop <- prop.table(as.matrix(female_phd1), 1)  #create proportion tab
 female_phd_x2 <- chisq.test(female_phd1)   #perform chisquare test
 
 female_phd_x2 
+
+# there is a significant association between year, department, and number of phds awarded. 
+
+# females moved out of education, and into the sciences and engineering. The humanities generally stayed the same. 
 ```
 
 
 
-**3. Male and female salaries for starting postdoctoral and other employment positions (2015). Compare median salaries for male and female doctorate recipients in 2015. Answer these two questions: Does median salary differ significantly between male and female starting postdoc positions? Does median salary differ significantly between male and female PhD recipients in non-postdoc employmentpositions?**
+**3. Male and female salaries for starting postdoctoral and other employment positions (2015). Compare median salaries for male and female doctorate recipients in 2015. Answer these two questions: Does median salary differ significantly between male and female starting postdoc positions? Does median salary differ significantly between male and female PhD recipients in non-postdoc employment positions?**
 
 ```{r}
-median_salaries <- read_csv("Median salary for doctoral recipients.csv")
+med_sal <- read_csv("Median salary for doctoral recipients.csv")
+
+med_sal_p_m <- filter(med_sal, employment_type == "p")
+
+med_sal_np <- filter(med_sal, employment_type == "np")
+
+
+## No idea how to do this one
+
+wsr_salaries <- wilcox.test(med_sal_p$median_salary, med_sal_p$median_salary, paired = TRUE)
+
+wsr_salaries
+
 ```
 
 
@@ -79,6 +101,8 @@ median_salaries <- read_csv("Median salary for doctoral recipients.csv")
 
 ```{r}
 faculty_salary <- read_csv("Faculty salary data (2008 - 2009 survey).csv")
+
+
 
 ```
 
