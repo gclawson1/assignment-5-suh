@@ -81,7 +81,7 @@ female_phd_x2
 **3. Male and female salaries for starting postdoctoral and other employment positions (2015). Compare median salaries for male and female doctorate recipients in 2015. Answer these two questions: Does median salary differ significantly between male and female starting postdoc positions? Does median salary differ significantly between male and female PhD recipients in non-postdoc employment positions?**
 
 ```{r}
-med_sal <- read_csv("Median salary for doctoral recipients cleaned.csv")
+med_sal <- read_csv("Median salary for doctoral recipients cleaned.csv")  # reading in NA values that aren't there!!!!
 
 wsr_salaries_p <- wilcox.test(med_sal$p_sal_m, med_sal$p_sal_f)
 
@@ -95,8 +95,14 @@ wsr_salaries_p
 ```{r}
 faculty_salary <- read_csv("Faculty salary data (2008 - 2009 survey).csv")
 
+# look at relationships between variables
 
+plot(faculty_salary$years_since, faculty_salary$salary) 
+plot(faculty_salary$years_service, faculty_salary$salary)
+plot(faculty_salary$years_since, faculty_salary$years_service) # colinear
 
+test_lm1 <- lm(salary ~ rank + field + years_since + years_service + sex, data = faculty_salary)
+summary(test_lm1)
 ```
 
 
