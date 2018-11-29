@@ -9,50 +9,103 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r}
+```{r, include = FALSE}
 # Load packages
 library(tidyverse)
 library(RColorBrewer)
 library(stargazer)
 library(knitr)
 library(car)
+library(effsize)
 ```
 
 
-** 1. Male and female graduate enrollment (1967 - 2015). Compare trends in total graduate enrollment for males and females (including full-time/part-time and private/public universities) in the United States from 1967 - 2015. Describe your results statistically, graphically and in text. **
+**1. Male and female graduate enrollment (1967 - 2015). Compare trends in total graduate enrollment for males and females (including full-time/part-time and private/public universities) in the United States from 1967 - 2015. Describe your results statistically, graphically and in text. **
 
 
-What if we want to describe the way that one variable
-changes with respect to another variable?
+What if we want to describe the way that one variable changes with respect to another variable?
 Then we might use regression to:
-(1) Understand how well input (x) variable(s) predict the
-value of an outcome (y) variable
-(2) How do input variables influence the output value?
-(3) Find a regression equation that *MAY* be used to
-make predictions for currently unknown values
+
+* Understand how well input (x) variable(s) predict the value of an outcome (y) variable
+
+* How do input variables influence the output value?
+
+* Find a regression equation that *MAY* be used to make predictions for currently unknown values
 
 
 4 assumptions for linear regression 
-• Linearity
-• Independence
-• Homoscedasticity (residuals variance)
-• Normality
+
+- Linearity
+
+- Independence
+
+- Homoscedasticity (residuals variance)
+
+- Normality
 
 Linear Regression Steps:
-(1) Look at and think about your data
-Does a linear relationship make the most sense, conceptually & visually?
-(2) Run the regression
-lm(y ~ x, data = df)
-(3) Check the diagnostic plots
-plot(model_name) – for evidence of homoscedasticity and normal residuals
-(4) Communicate the results in text/table/figure  
+
+- Look at and think about your data: Does a linear relationship make the most sense, conceptually & visually?
+
+- Run the regression: lm(y ~ x, data = df)
+
+- Check the diagnostic plots: plot(model_name) – for evidence of homoscedasticity and normal residuals
+
+- Communicate the results in text/table/figure  
 
 
 ```{r}
 # Read in dataset
 enroll_totals <- read_csv("Grad enrollment 1967 - 2015.csv")
 
-# Make a time series graph with year on x axis and totals on y axis
+#### Test for linearity ####
+plot(enroll_totals$year, enroll_totals$total_males)
+# male enrollment increases at a linear trend by year. 
+
+
+plot(enroll_totals$year, enroll_totals$total_females)
+# female enrollment increases at a linear trend by year
+
+#### Run regressions ####
+
+# linear regression for males predicted by year
+
+males_lm <- lm(total_males ~ year, data = enroll_totals)
+summary(males_lm)
+# total_male_enrollment = -17112153 + 9069*year
+
+# check diagnostic plots
+par(mfrow = c(2,2))
+plot(males_lm)
+# residuals are normally distributed
+
+
+# linear regression for females predicted by year
+
+females_lm <- lm(total_females ~ year, data = enroll_totals)
+summary(females_lm)
+#total_female_enrollment = -5.896e+07 + 3.013e+04*year
+
+# at year 0 for both models, we have negative enrollment, which is impossible. This means that we likely will not have a good model for past models. 
+
+# check diagnostic plots
+par(mfrow = c(2,2))
+plot(females_lm)
+# residuals are normally distributed
+
+# correlation testing for males vs year
+cor.test(enroll_totals$year, enroll_totals$total_males)
+# strong positive correlation
+
+# correlation testing for females vs year 
+cor.test(enroll_totals$year, enroll_totals$total_females)
+#even stronger positive correlation
+
+# Need to interpret.
+m_f_enroll_lmtbl <- stargazer(males_lm, females_lm, type = "html") # not working
+
+
+# FINAL GRAPH: Make a time series graph with year on x axis and totals on y axis
 
 totals_line <- ggplot(enroll_totals, aes(x = year)) +
   geom_line(aes(y = total_males, color = "blue")) +
@@ -65,22 +118,6 @@ totals_line <- ggplot(enroll_totals, aes(x = year)) +
   theme(text = element_text(family = "Century Schoolbook"), legend.title=element_blank())
 
 totals_line
-
-# linear regression for males predicted by year
-
-males_lm <- lm(total_males ~ year, data = enroll_totals)
-summary(males_lm)
-
-plot(males_lm)
-
-females_lm <- lm(total_females ~ year, data = enroll_totals)
-summary(females_lm)
-
-plot(females_lm)
-
-
-
-# Need to interpret. 
 ```
 
 **2. Shifts in female PhD recipients by field (1985, 2000, and 2015). Describe if and how there was a shift in PhDs awarded to females in four fields (Physical and Earth Sciences, Engineering, Education, and Humanities & Arts) in 1985, 2000, and 2015. Describe your results statistically, in a graph or table, and in text. Note: There are several ways that you can interpret this question. You are invited to decide which you think is/are most interesting. Just be really clear about what you are asking/answering in your report.**
@@ -101,59 +138,146 @@ female_phd_x2
 # there is a significant association between year, department, and number of phds awarded. 
 
 # females moved out of education, and into the sciences and engineering. The humanities generally stayed the same. 
+
+# make table
 ```
 
 
 
 **3. Male and female salaries for starting postdoctoral and other employment positions (2015). Compare median salaries for male and female doctorate recipients in 2015. Answer these two questions: Does median salary differ significantly between male and female starting postdoc positions? Does median salary differ significantly between male and female PhD recipients in non-postdoc employment positions?**
 
+
+- First test for equal variance
+
+- Mann-Whitney U (non paired) or wilcoxon signed rank (paired) ??
+
+- Cliffs Delta (effect size)
+
+- Actual difference in medians -- does this apply here? I don't think taking the median of medians makes since??
+
 ```{r}
-med_sal <- read_csv("Median salary for doctoral recipients cleaned.csv")  # reading in NA values that aren't there!!!!
+med_sal <- read_csv("Median salary for doctoral recipients cleaned.csv")
 
-wsr_salaries_p <- wilcox.test(med_sal$p_sal_m, med_sal$p_sal_f)
 
-wsr_salaries_p
+######################## Post Doctoral Work ############################
+# Test for equal variance
+# H0: Variances are equal
+# HA: Variances are not equal
 
+var_test_p <- var.test(med_sal$p_sal_m, med_sal$p_sal_f)
+var_test_p
+ # retain the null hypothesis that the variances are equal
+
+# Exploratory graphs
+# hist for male median salary postdoctoral
+
+
+p_male_hist <- ggplot(aes(x = p_sal_m), data = med_sal) +
+  geom_histogram(bins = 4.932424)
+p_male_hist
+# seems relatively normal
+
+p_female_hist <- ggplot(aes(x = p_sal_f), data = med_sal) +
+  geom_histogram(bins = 4.932424)
+p_female_hist
+# seems relatively normal
+
+
+# H0: There is not a significant difference in ranks for male and female post doc positions
+# HA: There is a significant difference in ranks for male and female post doc positions
+mwu_salaries_p <- wilcox.test(med_sal$p_sal_m, med_sal$p_sal_f) 
+
+mwu_salaries_p
+# p = 0.8671
+# this tells us to retain null. There is no significant diff
+
+# Cliffs delta
+p_sal_delta <- cliff.delta(med_sal$p_sal_m, med_sal$p_sal_f)
+p_sal_delta
+# effect size is 0.04 (negligible)
+
+# Actual difference in medians
+median(med_sal$p_sal_m) - median(med_sal$p_sal_f)
+# difference = 3000
+
+########################## non postdoctoral work #########################################
+# Test for equal variance
+# H0: Variances are equal
+# HA: Variances are not equal
+
+var_test_np <- var.test(med_sal$np_sal_m, med_sal$np_sal_f)
+var_test_np
+ # reject the null hypothesis that the variances are equal
+
+# Exploratory graphs
+# hist for male median salary postdoctoral
+
+
+np_male_hist <- ggplot(aes(x = np_sal_m), data = med_sal) +
+  geom_histogram(bins = 4.932424)
+np_male_hist
+# seems relatively normal
+
+np_female_hist <- ggplot(aes(x = np_sal_f), data = med_sal) +
+  geom_histogram(bins = 4.932424)
+np_female_hist
+# seems relatively normal
+
+
+# H0: There is not a significant difference in ranks for male and female non post doc positions
+# HA: There is a significant difference in ranks for male and female non post doc positions
+mwu_salaries_np <- wilcox.test(med_sal$np_sal_m, med_sal$np_sal_f) 
+
+mwu_salaries_np
+# p = 1.886e-05
+# this tells us to reject null. There is no significant diff
+
+# Cliffs delta
+np_sal_delta <- cliff.delta(med_sal$np_sal_m, med_sal$np_sal_f)
+np_sal_delta
+# effect size is 0.92 (LARGE)
+
+# Actual difference in medians
+median(med_sal$np_sal_m) - median(med_sal$np_sal_f)
+# difference = 30167
 ```
 
 
 **4. Exploring academic salaries for professors in U.S. colleges. Explore relationships between variables in the ‘Faculty salary data (2008 - 2009 survey)’ dataset. Develop a model describing faculty salary based on data for faculty sex, rank, years in current position, field, and number of years since doctoral degree was earned. You should make decisions regarding which variables should remain in your final model. Describe the results qualitatively and quantitatively (i.e., don’t just report the statistical results of the model – make sure you describe interesting findings in text). You can also discuss any concerns that you have with the model(s) you present, if any.**
 
 
-H0: The model does not significantly predict the
-outcome (i.e., there is no relationship between the
-model and the outcome; no variables significantly
+H0: The model does not significantly predict the outcome (i.e., there is no relationship between the model and the outcome; no variables significantly
 predict outcome)
-HA: AT LEAST ONE of the explanatory variables
-significantly predicts the outcome 
+HA: AT LEAST ONE of the explanatory variables significantly predicts the outcome 
 
 
-How do I know which model is the BEST
-one?
-1. STATISTICS IS NO SUBSTITUTE FOR
-JUDGMENT.
-2. ASSUMPTIONS.
-3. AKAIKE INFORMATION CRITERION.
+How do I know which model is the BEST one?
+
+- STATISTICS IS NO SUBSTITUTE FOR JUDGMENT.
+
+- ASSUMPTIONS.
+
+- AKAIKE INFORMATION CRITERION.
 
 Signs	and	Symptoms	of	Collinearity
-• High	correlation	between	predictor	variables
-• Large	standard	errors	for	regression	
-coefficient
-• Large	changes	in	model	output	for	small	
-changes	in	predictor	variable	inputs
-• Illogical/unexpected	 coefficients	 (esp.	
-coefficient	sign)
+
+- High	correlation	between	predictor	variables
+
+- Large	standard	errors	for	regression coefficient
+
+- Large	changes	in	model	output	for	small changes	in	predictor	variable	inputs
+
+- Illogical/unexpected	 coefficients	 (esp. coefficient	sign)
 
 Variance	Inflation	Factor
-How	much	the	variance	in	coefficients	is	inflated	
-(compared	 to	the	variance	if	there	were	no	
-correlation	 between	model	variables)	
-VIF	=	1:	No	correlation	(variance	is	not	inflated	at	all	by	correlation	
-with	other	predictor	variables)
-VIF	>	4:	Eeehhh…some	correlation,	investigate	further	and	think	
-critically	about	possible	overlaps	in	explanatory	variables
-VIF	>	10:	Serious	correlation	between	variables	that	may	be	
-strongly	inflating	coefficient	variance	and	error
+
+- How	much	the	variance	in	coefficients	is	inflated (compared	 to	the	variance	if	there	were	no correlation	 between	model	variables)	
+
+- VIF	=	1:	No	correlation	(variance	is	not	inflated	at	all	by	correlation with	other	predictor	variables)
+
+- VIF	>	4:	Eeehhh…some	correlation,	investigate	further	and	think critically	about	possible	overlaps	in explanatory	variables
+
+- VIF	>	10:	Serious	correlation	between	variables	that	may	be strongly	inflating	coefficient	variance	and	error
 
 
 
@@ -162,12 +286,38 @@ faculty_salary <- read_csv("Faculty salary data (2008 - 2009 survey).csv")
 
 # look at relationships between variables
 
-plot(faculty_salary$years_since, faculty_salary$salary) 
-plot(faculty_salary$years_service, faculty_salary$salary)
-plot(faculty_salary$years_since, faculty_salary$years_service) # colinear
+plot(faculty_salary$years_since, faculty_salary$salary) # looks ok
+plot(faculty_salary$years_service, faculty_salary$salary) # looks ok
+plot(faculty_salary$years_since, faculty_salary$years_service) # definitely colinear
 
+
+# saturated model
 test_lm1 <- lm(salary ~ rank + field + years_since + years_service + sex, data = faculty_salary)
 summary(test_lm1)
+
+# do we want to change reference level for any of the categorical variables?
+
+vif(test_lm1)
+# years since = 7.5
+# years service = 5.9
+# just as we expected, most likely colinear. Should be concerned. Lets try taking out years since phd. 
+
+
+test_lm2 <- lm(salary ~ rank + field + years_service + sex, data = faculty_salary)
+summary(test_lm2)
+
+vif(test_lm2)
+# everything is ok here
+
+### check AIC to determine which is better. Still we should trust our judgement here though
+
+AIC(test_lm1)
+#9093.826
+
+AIC(test_lm2)
+#9096.813
+
+# AIC for first model is smaller, do we want to keep that though?? Judgement says we should not have years_since and years_service in the same model. 
 ```
 
 
