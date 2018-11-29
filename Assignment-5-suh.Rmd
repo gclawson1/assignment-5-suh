@@ -215,7 +215,7 @@ median(med_sal$p_sal_m) - median(med_sal$p_sal_f)
 
 var_test_np <- var.test(med_sal$np_sal_m, med_sal$np_sal_f)
 var_test_np
- # reject the null hypothesis that the variances are equal
+ # retain the null hypothesis that the variances are equal
 
 # Exploratory graphs
 # hist for male median salary postdoctoral
@@ -237,17 +237,17 @@ np_female_hist
 mwu_salaries_np <- wilcox.test(med_sal$np_sal_m, med_sal$np_sal_f) 
 
 mwu_salaries_np
-# p = 1.886e-05
-# this tells us to reject null. There is no significant diff
+# p = 0.3289
+# this tells us to retain null. There is no significant diff
 
 # Cliffs delta
 np_sal_delta <- cliff.delta(med_sal$np_sal_m, med_sal$np_sal_f)
 np_sal_delta
-# effect size is 0.92 (LARGE)
+# effect size is 0.213333 (SMALL)
 
 # Actual difference in medians
 median(med_sal$np_sal_m) - median(med_sal$np_sal_f)
-# difference = 30167
+# difference = 3417
 ```
 
 
