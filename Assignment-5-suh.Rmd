@@ -17,6 +17,7 @@ library(stargazer)
 library(knitr)
 library(car)
 library(effsize)
+library(forcats)
 ```
 
 
@@ -118,8 +119,8 @@ m_f_enroll_lmtbl <- stargazer(males_lm, females_lm, type = "html") # not working
 totals_line <- ggplot(enroll_totals, aes(x = year)) +
   geom_line(aes(y = total_males, color = "blue")) +
   geom_line(aes(y = total_females, color = "red")) + 
-  theme_classic() +                                                        # do we want theme_bw() instead??
-  scale_x_continuous(expand = c(0,0), breaks = seq(1967, 2015, by = 5)) +  # do we want by 3 or by 5 years??
+  theme_classic() +                                                      
+  scale_x_continuous(expand = c(0,0), breaks = seq(1967, 2015, by = 5), limits = c(1967, 2015)) + 
   scale_y_continuous(breaks = seq(0, 2200000, by = 200000)) +
   scale_color_manual(values = c("#00AFBB", "#E7B800"), labels = c("Males", "Females")) +
   labs(x = "Year", y = "Enrollment Totals") +
@@ -141,13 +142,11 @@ female_phd_prop <- prop.table(as.matrix(female_phd1), 1)  #create proportion tab
 
 female_phd_x2 <- chisq.test(female_phd1)   #perform chisquare test
 
-female_phd_x2 
+female_phd_x2  ####### ilayda add total enrollment column #######
 
-# there is a significant association between year, department, and number of phds awarded. 
+# females moved out of education, and into the sciences and engineering (engineering especially). The humanities generally stayed the same. 
 
-# females moved out of education, and into the sciences and engineering. The humanities generally stayed the same. 
-
-# make table
+# Ilayda make table adding in the total enrollment of females column 
 ```
 
 
@@ -157,7 +156,7 @@ female_phd_x2
 
 - First test for equal variance
 
-- Mann-Whitney U (non paired) or wilcoxon signed rank (paired) ??
+- wilcoxon signed rank (paired) ??
 
 - Cliffs Delta (effect size)
 
@@ -193,9 +192,9 @@ p_female_hist
 
 # H0: There is not a significant difference in ranks for male and female post doc positions
 # HA: There is a significant difference in ranks for male and female post doc positions
-mwu_salaries_p <- wilcox.test(med_sal$p_sal_m, med_sal$p_sal_f) 
+wsr_salaries_p <- wilcox.test(med_sal$p_sal_m, med_sal$p_sal_f, paired = TRUE) 
 
-mwu_salaries_p
+wsr_salaries_p
 # p = 0.8671
 # this tells us to retain null. There is no significant diff
 
@@ -205,8 +204,12 @@ p_sal_delta
 # effect size is 0.04 (negligible)
 
 # Actual difference in medians
-median(med_sal$p_sal_m) - median(med_sal$p_sal_f)
+# median(med_sal$p_sal_m) - median(med_sal$p_sal_f)
 # difference = 3000
+
+med_sal_p <- med_sal %>%
+  select(field_of_study, p_sal_m, p_sal_f) %>%
+  mutate(difference = p_sal_m - p_sal_f)
 
 ########################## non postdoctoral work #########################################
 # Test for equal variance
@@ -234,9 +237,9 @@ np_female_hist
 
 # H0: There is not a significant difference in ranks for male and female non post doc positions
 # HA: There is a significant difference in ranks for male and female non post doc positions
-mwu_salaries_np <- wilcox.test(med_sal$np_sal_m, med_sal$np_sal_f) 
+wsr_salaries_np <- wilcox.test(med_sal$np_sal_m, med_sal$np_sal_f) 
 
-mwu_salaries_np
+wsr_salaries_np
 # p = 0.3289
 # this tells us to retain null. There is no significant diff
 
@@ -246,9 +249,15 @@ np_sal_delta
 # effect size is 0.213333 (SMALL)
 
 # Actual difference in medians
-median(med_sal$np_sal_m) - median(med_sal$np_sal_f)
+# median(med_sal$np_sal_m) - median(med_sal$np_sal_f)
 # difference = 3417
+
+med_sal_np <- med_sal %>%
+  select(field_of_study, np_sal_m, np_sal_f) %>%
+  mutate(difference = np_sal_m - np_sal_f)
 ```
+
+Institutions have set pay grades which is why there is less of a difference among the medians. 
 
 
 **4. Exploring academic salaries for professors in U.S. colleges. Explore relationships between variables in the ‘Faculty salary data (2008 - 2009 survey)’ dataset. Develop a model describing faculty salary based on data for faculty sex, rank, years in current position, field, and number of years since doctoral degree was earned. You should make decisions regarding which variables should remain in your final model. Describe the results qualitatively and quantitatively (i.e., don’t just report the statistical results of the model – make sure you describe interesting findings in text). You can also discuss any concerns that you have with the model(s) you present, if any.**
@@ -283,7 +292,7 @@ Variance	Inflation	Factor
 
 - VIF	=	1:	No	correlation	(variance	is	not	inflated	at	all	by	correlation with	other	predictor	variables)
 
-- VIF	>	4:	Eeehhh…some	correlation,	investigate	further	and	think critically	about	possible	overlaps	in explanatory	variables
+- VIF	>	4:	Eeehhh…some	correlation,	investigate	further	and	think critically about possible overlaps in explanatory	variables
 
 - VIF	>	10:	Serious	correlation	between	variables	that	may	be strongly	inflating	coefficient	variance	and	error
 
@@ -299,11 +308,30 @@ plot(faculty_salary$years_service, faculty_salary$salary) # looks ok
 plot(faculty_salary$years_since, faculty_salary$years_service) # definitely colinear
 
 
+
+# a. Set rank to class 'factor'
+faculty_salary$rank <- as.factor(faculty_salary$rank)
+
+# d. Reassign reference level of "rank" to "AsstProf":
+faculty_salary$rank <- fct_relevel(faculty_salary$rank, "AsstProf")
+levels(faculty_salary$rank)
+
+
+# a. Set field to class 'factor'
+faculty_salary$field <- as.factor(faculty_salary$field)
+
+# d. Reassign reference level of "Status" to "Regular":
+faculty_salary$field <- fct_relevel(faculty_salary$field, "Theoretical")
+levels(faculty_salary$field)
+
+
 # saturated model
 test_lm1 <- lm(salary ~ rank + field + years_since + years_service + sex, data = faculty_salary)
 summary(test_lm1)
 
 # do we want to change reference level for any of the categorical variables?
+
+
 
 vif(test_lm1)
 # years since = 7.5
@@ -352,19 +380,21 @@ ggplot(aes(x = years_since, y = salary, color = rank), data = faculty_salary) +
 
 ##interaction term for rank and years_service or years_since
 
-test_lm4 <- lm(salary ~ rank + field + years_since + sex + years_since*rank, data = faculty_salary)
+test_lm4 <- lm(salary ~ rank + field + years_since + sex + years_since*field, data = faculty_salary)
 summary(test_lm4)
+
+##### use this model^^^^^
 
 vif(test_lm4)
 
 AIC(test_lm4)
-#9099.707
+#9098.798
 
 
 ```
 
 ```{r stargazer, results = 'asis'}
-stargazer(test_lm1, test_lm2, type = "html")
+stargazer(test_lm3, test_lm4, type = "html")
 ```
 
 
