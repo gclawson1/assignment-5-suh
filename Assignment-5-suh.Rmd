@@ -450,3 +450,50 @@ stargazer(test_lm3, test_lm4, type = "html")
 ```
 
 
+```{r}
+
+######################## THIS IS NOT RIGHT ################################
+
+#predict values and graph
+
+df_new <- data.frame(rank = rep(c("Prof",
+                                  "AsstProf",
+                                  "AssocProf"),
+                                times = 12,
+                                each = 20), 
+                     field = rep(c("Applied",
+                                    "Theoretical"),
+                                  each = 360), 
+                     years_since = rep(seq(from = 1, 
+                                           to = 60, 
+                                           length = 20),
+                                       times = 12), 
+                     sex = rep(c("Male", 
+                                 "Female"), 
+                               each = 360),
+                     salary = rep(seq(from = 55000,
+                                    to = 235000, 
+                                    length = 20), 
+                                times = 12)) 
+
+# a. Make predictions using the new data frame:
+salary_predict <- as.data.frame(predict(test_lm4, newdata = df_new, se.fit = TRUE, interval = "confidence"))
+
+# b. Bind predictions to the data to make it actually useful:
+predict_df <- data.frame(df_new, salary_predict)
+
+```
+
+
+```{r}
+#line graph of predictions 
+predict_graph <- ggplot(predict_df, aes(x = years_since, y = fit.fit)) +
+  geom_line(aes(color = field)) +
+  facet_wrap(~rank)
+predict_graph
+
+```
+
+
+
+
