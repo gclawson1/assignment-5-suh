@@ -127,6 +127,24 @@ totals_line <- ggplot(enroll_totals, aes(x = year)) +
   theme(text = element_text(family = "Century Schoolbook"), legend.title=element_blank())
 
 totals_line
+
+
+# FINAL GRAPH: plot the regressions with geom_smooth
+regression_graphs <- ggplot(enroll_totals, aes(x = year)) +
+  geom_point(aes(y = total_males, color = "blue")) + 
+  geom_smooth(aes(y = total_males, color = "blue"), method = "lm", se = TRUE) +
+  geom_point(aes(y = total_females, color = "red")) +
+  geom_smooth(aes(y = total_females, color = "red"), method = "lm", se = TRUE) +
+  theme_bw() +
+  labs(x = "Year", y = "Enrollment Totals") +
+  scale_x_continuous(expand = c(0,0), breaks = seq(1967, 2015, by = 5), limits = c(1967, 2015)) +
+  scale_y_continuous(breaks = seq(0, 2200000, by = 200000)) +
+  scale_color_manual(values = c("skyblue1", "salmon"), labels = c("Males", "Females")) +
+  theme(text = element_text(family = "Century Schoolbook"), legend.title=element_blank())
+  
+  
+regression_graphs
+
 ```
 
 **2. Shifts in female PhD recipients by field (1985, 2000, and 2015). Describe if and how there was a shift in PhDs awarded to females in four fields (Physical and Earth Sciences, Engineering, Education, and Humanities & Arts) in 1985, 2000, and 2015. Describe your results statistically, in a graph or table, and in text. Note: There are several ways that you can interpret this question. You are invited to decide which you think is/are most interesting. Just be really clear about what you are asking/answering in your report.**
@@ -196,7 +214,7 @@ wsr_salaries_p <- wilcox.test(med_sal$p_sal_m, med_sal$p_sal_f, paired = TRUE)
 
 wsr_salaries_p
 # p = 0.8671
-# this tells us to retain null. There is no significant diff
+# this tells us to retain null. There is no significant diff between male and female post doc positions among field.
 
 # Cliffs delta
 p_sal_delta <- cliff.delta(med_sal$p_sal_m, med_sal$p_sal_f)
@@ -237,11 +255,11 @@ np_female_hist
 
 # H0: There is not a significant difference in ranks for male and female non post doc positions
 # HA: There is a significant difference in ranks for male and female non post doc positions
-wsr_salaries_np <- wilcox.test(med_sal$np_sal_m, med_sal$np_sal_f) 
+wsr_salaries_np <- wilcox.test(med_sal$np_sal_m, med_sal$np_sal_f, paired = TRUE) 
 
 wsr_salaries_np
-# p = 0.3289
-# this tells us to retain null. There is no significant diff
+# p = 0.002572
+# this tells us to reject null. There is significant diff between male and female non post doc positions aong field of study. 
 
 # Cliffs delta
 np_sal_delta <- cliff.delta(med_sal$np_sal_m, med_sal$np_sal_f)
@@ -257,7 +275,7 @@ med_sal_np <- med_sal %>%
   mutate(difference = np_sal_m - np_sal_f)
 ```
 
-Institutions have set pay grades which is why there is less of a difference among the medians. 
+Institutions have set pay grades which is why there is less of a difference among the medians for postdoc work. 
 
 
 **4. Exploring academic salaries for professors in U.S. colleges. Explore relationships between variables in the ‘Faculty salary data (2008 - 2009 survey)’ dataset. Develop a model describing faculty salary based on data for faculty sex, rank, years in current position, field, and number of years since doctoral degree was earned. You should make decisions regarding which variables should remain in your final model. Describe the results qualitatively and quantitatively (i.e., don’t just report the statistical results of the model – make sure you describe interesting findings in text). You can also discuss any concerns that you have with the model(s) you present, if any.**
@@ -328,10 +346,8 @@ levels(faculty_salary$field)
 # saturated model
 test_lm1 <- lm(salary ~ rank + field + years_since + years_service + sex, data = faculty_salary)
 summary(test_lm1)
-
-# do we want to change reference level for any of the categorical variables?
-
-
+plot(test_lm1)
+# heteroskedastic
 
 vif(test_lm1)
 # years since = 7.5
@@ -341,6 +357,9 @@ vif(test_lm1)
 
 test_lm2 <- lm(salary ~ rank + field + years_service + sex, data = faculty_salary)
 summary(test_lm2)
+plot(test_lm2)
+#heteroskedastic
+
 
 vif(test_lm2)
 # everything is ok here
@@ -349,6 +368,7 @@ vif(test_lm2)
 
 test_lm3 <- lm(salary ~ rank + field + years_since + sex, data = faculty_salary)
 summary(test_lm3)
+plot(test_lm3)
 
 ### check AIC to determine which is better. Still we should trust our judgement here though
 
@@ -378,7 +398,7 @@ ggplot(aes(x = years_since, y = salary, color = rank), data = faculty_salary) +
   geom_point() + 
   geom_smooth(aes(years_since, salary, color = rank), method = lm, se = FALSE)
 
-##interaction term for rank and years_service or years_since
+##interaction term for field and years_since
 
 test_lm4 <- lm(salary ~ rank + field + years_since + sex + years_since*field, data = faculty_salary)
 summary(test_lm4)
