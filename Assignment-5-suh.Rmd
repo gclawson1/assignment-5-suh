@@ -135,7 +135,7 @@ regression_graphs <- ggplot(enroll_totals, aes(x = year)) +
   geom_smooth(aes(y = total_males, color = "blue"), method = "lm", se = TRUE) +
   geom_point(aes(y = total_females, color = "red")) +
   geom_smooth(aes(y = total_females, color = "red"), method = "lm", se = TRUE) +
-  theme_bw() +
+  theme_classic() +
   labs(x = "Year", y = "Enrollment Totals") +
   scale_x_continuous(expand = c(0,0), breaks = seq(1967, 2015, by = 5), limits = c(1967, 2015)) +
   scale_y_continuous(breaks = seq(0, 2200000, by = 200000)) +
@@ -166,6 +166,38 @@ female_phd_x2  ####### ilayda add total enrollment column #######
 
 # Ilayda make table adding in the total enrollment of females column 
 ```
+
+```{r}
+#adding stacked barchart to see if we want to use it
+stacked_bar_data <- read_csv("female_phd_stackedbar.csv")
+
+stacked_bar_data$year <- as.character(stacked_bar_data$year)
+
+stacked_bar <- ggplot(stacked_bar_data, aes(x = year, y = degrees_awarded, fill = field_of_study)) +
+  geom_bar(stat = "identity") +
+  theme_classic() +
+  scale_x_discrete(expand = c(0,0)) +
+  scale_y_continuous(expand = c(0,0)) +
+  theme(text = element_text(family = "Century Schoolbook")) +
+  scale_fill_discrete(name = "Field of Study") +
+  labs(x = "Year", y = "Degrees Awarded")  + 
+  annotate("text", x = 1, y = 270, label = "10.1%", family = "Century Schoolbook") +
+  annotate("text", x = 1, y = 1300, label = "24.6%", family = "Century Schoolbook") +
+  annotate("text", x = 1, y = 2100, label = "3.5%", family = "Century Schoolbook") +
+  annotate("text", x = 1, y = 3700, label = "61.8%", family = "Century Schoolbook") +
+  annotate("text", x = 2, y = 500, label = "11.7%", family = "Century Schoolbook") +
+  annotate("text", x = 2, y = 2400, label = "30.7%", family = "Century Schoolbook") +
+  annotate("text", x = 2, y = 4100, label = "9.6%", family = "Century Schoolbook") +
+  annotate("text", x = 2, y = 6500, label = "48.0%", family = "Century Schoolbook") +
+  annotate("text", x = 3, y = 900, label = "18.7%", family = "Century Schoolbook") +
+  annotate("text", x = 3, y = 3300, label = "26.7%", family = "Century Schoolbook") +
+  annotate("text", x = 3, y = 6000, label = "21.7%", family = "Century Schoolbook") +
+  annotate("text", x = 3, y = 8800, label = "32.9%", family = "Century Schoolbook") 
+  
+  
+stacked_bar
+```
+
 
 
 
