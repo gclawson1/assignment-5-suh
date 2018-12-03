@@ -420,7 +420,11 @@ ggplot(aes(x = years_service, y = salary, color = field), data = faculty_salary)
 
 ggplot(aes(x = years_since, y = salary, color = field), data = faculty_salary) +
   geom_point() + 
-  geom_smooth(aes(years_since, salary, color = field), method = lm, se = FALSE)
+  geom_smooth(aes(years_since, salary, color = field), method = lm, se = FALSE) +
+  theme_classic() +
+  labs(x = "Years Since PHD", y = "Salary", color = "Field") +
+  theme(text = element_text(family = "Century Schoolbook"))
+  
 
 ggplot(aes(x = years_service, y = salary, color = rank), data = faculty_salary) +
   geom_point() + 
