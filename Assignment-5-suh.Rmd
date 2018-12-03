@@ -85,6 +85,7 @@ plot(males_lm)
 
 females_lm <- lm(total_females ~ year, data = enroll_totals)
 summary(females_lm)
+females_lm
 #total_female_enrollment = -5.896e+07 + 3.013e+04*year
 
 # at year 0 for both models, we have negative enrollment, which is impossible. This means that we likely will not have a good model for past models. 
@@ -140,12 +141,18 @@ regression_graphs <- ggplot(enroll_totals, aes(x = year)) +
   scale_x_continuous(expand = c(0,0), breaks = seq(1967, 2015, by = 5), limits = c(1967, 2015)) +
   scale_y_continuous(breaks = seq(0, 2200000, by = 200000)) +
   scale_color_manual(values = c("skyblue1", "salmon"), labels = c("Males", "Females")) +
-  theme(text = element_text(family = "Century Schoolbook"), legend.title=element_blank())
+  theme(text = element_text(family = "Century Schoolbook"), legend.title=element_blank(), legend.box.background = element_rect(colour = "grey"), panel.background = element_rect(fill = "white")) +
+  annotate("text", x = 1997, y = 1600000, label = "Y = -58,955,502 + 30,126X", family = "Century Schoolbook") +
+   annotate("text", x = 1997, y = 1500000, label = expression(R^2~0.98) , family = "Century Schoolbook") 
   
   
 regression_graphs
 
 ```
+
+female: y = ...
+
+male: y = ...
 
 **2. Shifts in female PhD recipients by field (1985, 2000, and 2015). Describe if and how there was a shift in PhDs awarded to females in four fields (Physical and Earth Sciences, Engineering, Education, and Humanities & Arts) in 1985, 2000, and 2015. Describe your results statistically, in a graph or table, and in text. Note: There are several ways that you can interpret this question. You are invited to decide which you think is/are most interesting. Just be really clear about what you are asking/answering in your report.**
 
@@ -178,12 +185,12 @@ stacked_bar <- ggplot(stacked_bar_data, aes(x = year, y = degrees_awarded, fill 
   theme_classic() +
   scale_x_discrete(expand = c(0,0)) +
   scale_y_continuous(expand = c(0,0)) +
-  theme(text = element_text(family = "Century Schoolbook")) +
+  theme(text = element_text(family = "Century Schoolbook"), legend.box.background = element_rect(colour = "grey")) +
   scale_fill_discrete(name = "Field of Study") +
   labs(x = "Year", y = "Degrees Awarded")  + 
   annotate("text", x = 1, y = 270, label = "10.1%", family = "Century Schoolbook") +
   annotate("text", x = 1, y = 1300, label = "24.6%", family = "Century Schoolbook") +
-  annotate("text", x = 1, y = 2100, label = "3.5%", family = "Century Schoolbook") +
+  annotate("text", x = 1, y = 2075, label = "3.5%", family = "Century Schoolbook") +
   annotate("text", x = 1, y = 3700, label = "61.8%", family = "Century Schoolbook") +
   annotate("text", x = 2, y = 500, label = "11.7%", family = "Century Schoolbook") +
   annotate("text", x = 2, y = 2400, label = "30.7%", family = "Century Schoolbook") +
