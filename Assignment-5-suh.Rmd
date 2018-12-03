@@ -141,9 +141,12 @@ regression_graphs <- ggplot(enroll_totals, aes(x = year)) +
   scale_x_continuous(expand = c(0,0), breaks = seq(1967, 2015, by = 5), limits = c(1967, 2015)) +
   scale_y_continuous(breaks = seq(0, 2200000, by = 200000)) +
   scale_color_manual(values = c("skyblue1", "salmon"), labels = c("Males", "Females")) +
-  theme(text = element_text(family = "Century Schoolbook"), legend.title=element_blank(), legend.box.background = element_rect(colour = "grey"), panel.background = element_rect(fill = "white")) +
-  annotate("text", x = 1997, y = 1600000, label = "Y = -58,955,502 + 30,126X", family = "Century Schoolbook") +
-   annotate("text", x = 1997, y = 1500000, label = expression(R^2~0.98) , family = "Century Schoolbook") 
+  theme(text = element_text(family = "Century Schoolbook"), legend.title=element_blank()) +
+  annotate("text", x = 1997, y = 1600000, label = "y = -58,955,502 + 30,126x", family = "Century Schoolbook") +
+   annotate("text", x = 1997, y = 1500000, label = expression(R^2~"="~0.98) , family = "Century Schoolbook") + annotate("text", x = 1997, y = 1700000, label = "Females:", family = "Century Schoolbook") +
+  annotate("text", x = 2002, y = 775000, label = "y = -17,112,153 + 9,069x", family = "Century Schoolbook") +
+   annotate("text", x = 2002, y = 700000, label = expression(R^2~"="~0.85) , family = "Century Schoolbook") + annotate("text", x = 2002, y = 850000, label = "Males:", family = "Century Schoolbook") 
+  
   
   
 regression_graphs
@@ -185,7 +188,7 @@ stacked_bar <- ggplot(stacked_bar_data, aes(x = year, y = degrees_awarded, fill 
   theme_classic() +
   scale_x_discrete(expand = c(0,0)) +
   scale_y_continuous(expand = c(0,0)) +
-  theme(text = element_text(family = "Century Schoolbook"), legend.box.background = element_rect(colour = "grey")) +
+  theme(text = element_text(family = "Century Schoolbook")) +
   scale_fill_discrete(name = "Field of Study") +
   labs(x = "Year", y = "Degrees Awarded")  + 
   annotate("text", x = 1, y = 270, label = "10.1%", family = "Century Schoolbook") +
@@ -314,7 +317,36 @@ med_sal_np <- med_sal %>%
   mutate(difference = np_sal_m - np_sal_f)
 ```
 
-Institutions have set pay grades which is why there is less of a difference among the medians for postdoc work. 
+```{r}
+# read in new med_sal data
+med_sal_bar <- read_csv("med_sal_bar.csv")
+
+# column graph of differences for non postdoctoral work
+np_bar_salaries <- ggplot(med_sal_bar, aes(x = field_of_study, y = salary_np, fill = gender)) +
+  geom_col(stat = "identity", position = "dodge") +
+  coord_flip() +
+  theme_classic() +
+  scale_x_discrete(expand = c(0,0)) +
+  scale_y_continuous(expand = c(0,0)) +
+  labs(x = "Field of Study", y = "Median Salary ($)") +
+  theme(text = element_text(family = "Century Schoolbook"), legend.title=element_blank()) +
+  scale_fill_manual( values = c("salmon", "skyblue1"),labels = c("Female", "Male"))
+np_bar_salaries
+
+# column graph of differences for postdoctoral work
+p_bar_salaries <- ggplot(med_sal_bar, aes(x = field_of_study, y = salary_p, fill = gender)) +
+  geom_col(stat = "identity", position = "dodge") +
+  coord_flip() +
+  theme_classic() +
+  scale_x_discrete(expand = c(0,0)) +
+  scale_y_continuous(expand = c(0,0)) +
+  labs(x = "Field of Study", y = "Median Salary ($)") +
+  scale_fill_manual(values = c("salmon", "skyblue1"),labels = c("Female", "Male")) +
+  theme(text = element_text(family = "Century Schoolbook"), legend.title=element_blank())
+p_bar_salaries
+```
+
+
 
 
 **4. Exploring academic salaries for professors in U.S. colleges. Explore relationships between variables in the ‘Faculty salary data (2008 - 2009 survey)’ dataset. Develop a model describing faculty salary based on data for faculty sex, rank, years in current position, field, and number of years since doctoral degree was earned. You should make decisions regarding which variables should remain in your final model. Describe the results qualitatively and quantitatively (i.e., don’t just report the statistical results of the model – make sure you describe interesting findings in text). You can also discuss any concerns that you have with the model(s) you present, if any.**
