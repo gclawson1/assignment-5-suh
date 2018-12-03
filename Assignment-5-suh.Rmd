@@ -488,8 +488,8 @@ predict_df <- data.frame(df_new, salary_predict)
 ```{r}
 #line graph of predictions 
 predict_graph <- ggplot(predict_df, aes(x = years_since, y = fit.fit)) +
-  geom_line(aes(color = field)) +
-  facet_wrap(~rank)
+  geom_line(aes(color = rank)) +
+  facet_wrap(~field)
 predict_graph
 
 ```
