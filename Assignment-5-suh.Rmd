@@ -210,7 +210,7 @@ stacked_bar
 
 - Cliffs Delta (effect size)
 
-- Actual difference in medians -- does this apply here? I don't think taking the median of medians makes since??
+- Actual difference in medians -- does this apply here? I don't think taking the median of medians makes sense??
 
 ```{r}
 med_sal <- read_csv("Median salary for doctoral recipients cleaned.csv")
@@ -291,7 +291,7 @@ wsr_salaries_np <- wilcox.test(med_sal$np_sal_m, med_sal$np_sal_f, paired = TRUE
 
 wsr_salaries_np
 # p = 0.002572
-# this tells us to reject null. There is significant diff between male and female non post doc positions aong field of study. 
+# this tells us to reject null. There is significant diff between male and female non post doc positions among field of study. 
 
 # Cliffs delta
 np_sal_delta <- cliff.delta(med_sal$np_sal_m, med_sal$np_sal_f)
@@ -438,13 +438,25 @@ ggplot(aes(x = years_since, y = salary, color = rank), data = faculty_salary) +
 
 test_lm4 <- lm(salary ~ rank + field + years_since + sex + years_since*field, data = faculty_salary)
 summary(test_lm4)
-
-##### use this model^^^^^
+##### use this model^^^^^ - it makes the most sense in the context of the numbers. Applied should make more than theoretical. Prof and Assoc prof should make more than assistant prof. Salary should increase per each year since phd. Males likely make more money than females. Applied per year should be more than theoretical per year. The rest of the models below do not meet all of these assumptions. 
 
 vif(test_lm4)
 
 AIC(test_lm4)
 #9098.798
+
+##interaction term for rank and years_since
+test_lm5 <- lm(salary~ rank + field + years_since + sex + years_since*rank, data = faculty_salary)
+summary(test_lm5)
+
+##interaction term for rank and years_service
+test_lm6 <- lm(salary~ rank + field + years_service + sex + years_service*rank, data = faculty_salary)
+summary(test_lm6)
+
+##interaction term for field and years_service
+test_lm7 <- lm(salary~ rank + field + years_service + sex + years_service*field, data = faculty_salary)
+summary(test_lm7)
+
 
 
 ```
