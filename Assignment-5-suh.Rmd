@@ -142,9 +142,9 @@ regression_graphs <- ggplot(enroll_totals, aes(x = year)) +
   scale_y_continuous(breaks = seq(0, 2200000, by = 200000)) +
   scale_color_manual(values = c("skyblue1", "salmon"), labels = c("Males", "Females")) +
   theme(text = element_text(family = "Century Schoolbook"), legend.title=element_blank()) +
-  annotate("text", x = 1997, y = 1600000, label = "y = -58,955,502 + 30,126x", family = "Century Schoolbook") +
+  annotate("text", x = 1997, y = 1600000, label = "y = -58955502 + 30126x", family = "Century Schoolbook") +
    annotate("text", x = 1997, y = 1500000, label = expression(R^2~"="~0.98) , family = "Century Schoolbook") + annotate("text", x = 1997, y = 1700000, label = "Females:", family = "Century Schoolbook") +
-  annotate("text", x = 2002, y = 775000, label = "y = -17,112,153 + 9,069x", family = "Century Schoolbook") +
+  annotate("text", x = 2002, y = 775000, label = "y = -17112153 + 9069x", family = "Century Schoolbook") +
    annotate("text", x = 2002, y = 700000, label = expression(R^2~"="~0.85) , family = "Century Schoolbook") + annotate("text", x = 2002, y = 850000, label = "Males:", family = "Century Schoolbook") 
   
   
