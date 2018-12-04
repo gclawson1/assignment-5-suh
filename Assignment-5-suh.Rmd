@@ -109,7 +109,7 @@ cor.test(enroll_totals$year, enroll_totals$total_females)
 
 
 ```{r stargazer1, results = 'asis'}
-m_f_enroll_lmtbl <- stargazer(males_lm, females_lm, type = "html") # not working
+m_f_enroll_lmtbl <- stargazer(males_lm, females_lm, type = "html", out = "AIC.htm")
 
 ```
 
@@ -441,6 +441,8 @@ test_lm3 <- lm(salary ~ rank + field + years_since + sex, data = faculty_salary)
 summary(test_lm3)
 plot(test_lm3)
 
+##### use this model^^^^^ 
+
 ### check AIC to determine which is better. Still we should trust our judgement here though
 
 AIC(test_lm1)
@@ -477,7 +479,6 @@ ggplot(aes(x = years_since, y = salary, color = rank), data = faculty_salary) +
 
 test_lm4 <- lm(salary ~ rank + field + years_since + sex + years_since*field, data = faculty_salary)
 summary(test_lm4)
-##### use this model^^^^^ - it makes the most sense in the context of the numbers. Applied should make more than theoretical. Prof and Assoc prof should make more than assistant prof. Salary should increase per each year since phd. Males likely make more money than females. Applied per year should be more than theoretical per year. The rest of the models below do not meet all of these assumptions. 
 
 vif(test_lm4)
 
@@ -501,7 +502,7 @@ summary(test_lm7)
 ```
 
 ```{r stargazer, results = 'asis'}
-stargazer(test_lm3, test_lm4, type = "html")
+stargazer(test_lm3, type = "html")
 ```
 
 
